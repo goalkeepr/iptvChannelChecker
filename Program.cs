@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using iptvChannelChecker.Windows.Forms;
 
 namespace iptvChannelChecker
 {
@@ -14,8 +15,9 @@ namespace iptvChannelChecker
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+//            Application.EnableVisualStyles();
+//            Application.SetCompatibleTextRenderingDefault(false);
+            UI.SetUpErrorHandling();
             Application.Run(new frmMain());
         }
     }

@@ -5,19 +5,19 @@ namespace iptvChannelChecker
 {
     class ChannelEntry
     {
-        public string TvgId;
-        public string TvgName;
-        public string TvgLogo;
-        public string ChannelId;
-        public string ChannelName;
-        public string GroupTitle;
-        public string StreamId;
-        public string StreamUrl;
-        public int Width;
-        public int Height;
-        public float FrameRate;
-        public string ErrorType;
-        public string Provider;
+        public string TvgId { get; set; }
+        public string TvgName { get; set; }
+        public string TvgLogo { get; set; }
+        public string ChannelId { get; set; }
+        public string ChannelName { get; set; }
+        public string GroupTitle { get; set; }
+        public string StreamId { get; set; }
+        public string StreamUrl { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public float FrameRate { get; set; }
+        public string ErrorType { get; set; }
+        public string Provider { get; set; }
 
         public int FrameRateInt
         {
@@ -138,6 +138,7 @@ namespace iptvChannelChecker
 
                 ffProbe.ExecutionTimeout = new TimeSpan(0, 0, 10);
                 var videoInfo = ffProbe.GetMediaInfo(string.Concat("\"", nextLine, "\""));
+                //var videoInfo = ffProbe.GetMediaInfo(nextLine);
                 //var videoInfo = ffProbe.GetMediaInfo(nextLine.Replace("@", "%40"));
 
                 //Console.WriteLine("Media information for: {0}", nextLine);
