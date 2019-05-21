@@ -48,6 +48,8 @@ namespace iptvChannelChecker
         /// </summary>
         public bool IsAlive => ActiveThreads > 0 || WaitingThreads.Count > 0;
 
+        public bool KillThreads = false;
+
 
         /// <summary>
         ///     Returns the number of currently running threads
@@ -76,7 +78,7 @@ namespace iptvChannelChecker
         /// </summary>
         public void RunAsynch()
         {
-            while (true)
+            while (!KillThreads)
                 lock (WaitingThreads)
                 {
                     if (WaitingThreads.Count != 0 && ActiveThreads < MaximumThreads)

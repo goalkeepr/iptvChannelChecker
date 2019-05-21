@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -26,9 +27,11 @@ namespace iptvChannelChecker
         private bool _stopRunning;
         private int _totalChannels;
 
+        private ThreadHandler _threadHandler = new ThreadHandler(2);
         public frmMain()
         {
             InitializeComponent();
+            cboAllowedConnections.SelectedIndex = 0;
             dgvChannels.AutoGenerateColumns = false;
         }
 
@@ -54,8 +57,8 @@ namespace iptvChannelChecker
         {
             var saveFileDialog = new SaveFileDialog
             {
-                Filter = "m3u files (*.m3u;*.m3u8)|*.m3u;*.m3u8|All Files (*.*)|*.*",
-                Title = "Output - Select m3u/m3u8 File"
+                Filter = "csv files (*.csv)|*.csv|All Files (*.*)|*.*",
+                Title = "Output - Select csv File"
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK) txtOutputFile.Text = saveFileDialog.FileName;
@@ -63,6 +66,8 @@ namespace iptvChannelChecker
 
         private async void BtnGo_Click(object sender, EventArgs e)
         {
+            _channelEntries.Clear();
+            RebindDataGridView();
             prgProgressBar.Maximum = _totalChannels;
             prgProgressBar.Step = 1;
             prgProgressBar.Value = 0;
@@ -71,8 +76,8 @@ namespace iptvChannelChecker
             {
                 // This lambda is executed in context of UI thread,
                 // so it can safely update form controls
-                prgProgressBar.Value = v;
-                lblProgress.Text = string.Format("{0} / {1} ({2}%)", v, _totalChannels, v * 100 / _totalChannels);
+                prgProgressBar.Value += v;
+                lblProgress.Text = string.Format("{0} / {1} ({2}%)", prgProgressBar.Value, _totalChannels, prgProgressBar.Value * 100 / _totalChannels);
                 lblTotalChannelsCount.Text = (_goodChannels + _badChannels).ToString("N0");
                 lblGoodChannelsCount.Text = _goodChannels.ToString("N0");
                 lblBadChannelsCount.Text = _badChannels.ToString("N0");
@@ -88,6 +93,7 @@ namespace iptvChannelChecker
             await Task.Run(() => DoWork(progress));
 
             // TODO: Do something after all calculations
+            OutputResultsFile();
         }
 
         public void DoWork(IProgress<int> progress)
@@ -103,41 +109,52 @@ namespace iptvChannelChecker
 
                 if (_fileLines[channels].StartsWith("#EXTINF"))
                 {
-                    var channelEntry = new ChannelEntry(string.Empty, _fileLines[channels], _fileLines[channels + 1],
-                        string.Empty, string.Empty);
-                    _channelEntries.Add(channelEntry);
-                    if (string.IsNullOrEmpty(channelEntry.ErrorType))
-                    {
-                        _goodChannels++;
-                        if (channelEntry.Width > 1280)
-                        {
-                            if (channelEntry.FrameRateInt >= 50)
-                                _1080x60Count++;
-                            else
-                                _1080x30Count++;
-                        }
-                        else if (channelEntry.Width == 1280)
-                        {
-                            if (channelEntry.FrameRateInt >= 50)
-                                _720x60Count++;
-                            else
-                                _720x30Count++;
-                        }
-                        else
-                        {
-                            _otherSdCount++;
-                        }
-                    }
-                    else
-                    {
-                        _badChannels++;
-                    }
-
-                    progress.Report(i++);
+                    string firstLine = _fileLines[channels];
+                    string secondLine = _fileLines[channels + 1];
+                    //var channelEntry = new ChannelEntry(string.Empty, _fileLines[channels], _fileLines[channels + 1],
+                    ThreadStart threadStart = () => GetChannelInfo(progress, firstLine, secondLine);
+                    _threadHandler.Add(threadStart);
                 }
             }
 
+            _threadHandler.Run();
             _stopRunning = false;
+        }
+
+        private void GetChannelInfo(IProgress<int> progress, string firstLine, string secondLine)
+        {
+            var channelEntry = new ChannelEntry(string.Empty, firstLine, secondLine,
+                string.Empty, string.Empty);
+            _channelEntries.Add(channelEntry);
+            if (string.IsNullOrEmpty(channelEntry.ErrorType))
+            {
+                _goodChannels++;
+                if (channelEntry.Width > 1280)
+                {
+                    if (channelEntry.FrameRateInt >= 50)
+                        _1080x60Count++;
+                    else
+                        _1080x30Count++;
+                }
+                else if (channelEntry.Width == 1280)
+                {
+                    if (channelEntry.FrameRateInt >= 50)
+                        _720x60Count++;
+                    else
+                        _720x30Count++;
+                }
+                else
+                {
+                    _otherSdCount++;
+                }
+            }
+            else
+            {
+                _badChannels++;
+            }
+
+            //progress.Report(i++);
+            progress.Report(1);
         }
 
         private void RebindDataGridView()
@@ -153,6 +170,46 @@ namespace iptvChannelChecker
         private void BtnStop_Click(object sender, EventArgs e)
         {
             _stopRunning = true;
+            _threadHandler.KillThreads = true;
+            OutputResultsFile();
+        }
+
+        private void CboAllowedConnections_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _threadHandler = new ThreadHandler(cboAllowedConnections.SelectedIndex+1);
+        }
+
+        private void OutputResultsFile()
+        {
+            if(!string.IsNullOrEmpty(txtOutputFile.Text))
+            {
+                try
+                {
+                    using (StreamWriter streamWriter = new StreamWriter(txtOutputFile.Text))
+                    {
+                        streamWriter.WriteLine("TVG ID,TVG Name,Group Title,Channel Name,Width,Height,Frame Rate,Quality Level,Error Type");
+                        foreach (ChannelEntry channelEntry in _channelEntries)
+                        {
+                            streamWriter.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}", channelEntry.TvgId, channelEntry.TvgName, channelEntry.GroupTitle, channelEntry.ChannelName, channelEntry.Width, channelEntry.Height, channelEntry.FrameRateInt, channelEntry.QualityLevel, channelEntry.ErrorType));
+                        }
+                    }
+
+                    try
+                    {
+                        Process.Start("excel.exe", txtOutputFile.Text);
+                    }
+                    catch (Exception e)
+                    {
+
+                        Process.Start("notepad.exe", txtOutputFile.Text);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+
         }
     }
 }
