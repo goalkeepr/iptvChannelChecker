@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -27,7 +28,11 @@ namespace iptvChannelChecker
         private bool _stopRunning;
         private int _totalChannels;
 
+        private DateTime _startDateTime;
+
         private ThreadHandler _threadHandler = new ThreadHandler(2);
+        private List<string> _groupsToCheck = new List<string>();
+        private Dictionary<string, int> _groupsDictionary = new Dictionary<string, int>();
         public frmMain()
         {
             InitializeComponent();
@@ -50,6 +55,40 @@ namespace iptvChannelChecker
 
                 _fileLines = File.ReadAllLines(openFileDialog.FileName);
                 _totalChannels = _fileLines.Count(p => p.StartsWith("#EXTINF"));
+
+                clbGroups.Items.Clear();
+
+                int channelCount = 0;
+                foreach (string fileLine in _fileLines)
+                {
+                    if (fileLine.StartsWith("#EXTINF"))
+                    {
+                        string groupName = Utilities.ExtractData(fileLine, "group-title");
+                        groupName = string.IsNullOrEmpty(groupName) ? "<No Group>" : groupName;
+
+                        //if (!clbGroups.Items.Contains(groupName))
+                        //{
+                        //    clbGroups.Items.Add(groupName);
+                        //}
+                        channelCount++;
+
+                        if (!_groupsDictionary.ContainsKey(groupName))
+                        {
+                            _groupsDictionary.Add(groupName, 1);
+                        }
+                        else
+                        {
+                            _groupsDictionary[groupName]++;
+                        }
+                    }
+                }
+
+                clbGroups.Items.Add(string.Format("{0} ({1})", "All Groups", channelCount));
+
+                foreach (string key in _groupsDictionary.Keys)
+                {
+                    clbGroups.Items.Add(string.Format("{0} ({1})", key, _groupsDictionary[key]));
+                }
             }
         }
 
@@ -66,8 +105,19 @@ namespace iptvChannelChecker
 
         private async void BtnGo_Click(object sender, EventArgs e)
         {
+            _startDateTime = DateTime.Now;
             _channelEntries.Clear();
             RebindDataGridView();
+            PopulateGroupsToCheck();
+            _totalChannels = 0;
+
+            for (int i = 0; i < _fileLines.Length; i++)
+            {
+                if (_fileLines[i].StartsWith("#EXTINF") && _groupsToCheck.Contains(Utilities.ExtractData(_fileLines[i], "group-title")))
+                {
+                    _totalChannels++;
+                }
+            }
             prgProgressBar.Maximum = _totalChannels;
             prgProgressBar.Step = 1;
             prgProgressBar.Value = 0;
@@ -86,11 +136,21 @@ namespace iptvChannelChecker
                 lbl720x60Count.Text = _720x60Count.ToString("N0");
                 lbl720x30Count.Text = _720x30Count.ToString("N0");
                 lblOtherSdCount.Text = _otherSdCount.ToString("N0");
+                lblEstimatedCompletionDate.Text = DateTime.Now.AddSeconds(((DateTime.Now - _startDateTime).TotalSeconds / ((float) (_goodChannels + _badChannels))) * _totalChannels).ToString("MM/dd/yyyy hh:mm tt");
                 RebindDataGridView();
             });
 
             // Run operation in another thread
             await Task.Run(() => DoWork(progress));
+
+            //SortableBindingList<ChannelEntry> sortableBindingList = new SortableBindingList<ChannelEntry>(_channelEntries);
+            //var bindingSource = new BindingSource();
+            //bindingSource.DataSource = sortableBindingList;
+
+            //dgvChannels.DataSource = bindingSource;
+            //dgvChannels.Update();
+            //dgvChannels.Refresh();
+            //bindingSource.Sort = "GroupTitle,ChannelName";
 
             // TODO: Do something after all calculations
             OutputResultsFile();
@@ -111,9 +171,14 @@ namespace iptvChannelChecker
                 {
                     string firstLine = _fileLines[channels];
                     string secondLine = _fileLines[channels + 1];
+                    string groupName = Utilities.ExtractData(_fileLines[channels], "group-title");
+
+                    if (_groupsToCheck.Contains(groupName) || (_groupsToCheck.Contains("<No Group>") && string.IsNullOrEmpty(groupName)))
+                    {
+                        ThreadStart threadStart = () => GetChannelInfo(progress, firstLine, secondLine);
+                        _threadHandler.Add(threadStart);
+                    }
                     //var channelEntry = new ChannelEntry(string.Empty, _fileLines[channels], _fileLines[channels + 1],
-                    ThreadStart threadStart = () => GetChannelInfo(progress, firstLine, secondLine);
-                    _threadHandler.Add(threadStart);
                 }
             }
 
@@ -165,6 +230,7 @@ namespace iptvChannelChecker
             dgvChannels.DataSource = bindingSource;
             dgvChannels.Update();
             dgvChannels.Refresh();
+
         }
 
         private void BtnStop_Click(object sender, EventArgs e)
@@ -209,6 +275,54 @@ namespace iptvChannelChecker
                     throw;
                 }
             }
+
+        }
+
+        private void FrmMain_Load(object sender, EventArgs e)
+        {
+
+        }
+
+
+
+        private void ClbGroups_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (e.Index == 0)
+            {
+                if (e.NewValue == CheckState.Checked)
+                {
+                    ChangeAllCheckBoxValues(true);
+                }
+                else
+                {
+                    ChangeAllCheckBoxValues(false);
+                }
+            }
+
+
+        }
+
+        private void ChangeAllCheckBoxValues(bool value)
+        {
+            for (int i = 1; i < clbGroups.Items.Count; i++)
+            {
+                clbGroups.SetItemChecked(i, value);
+            }
+        }
+
+        private void PopulateGroupsToCheck()
+        {
+            _groupsToCheck.Clear();
+            foreach (int indexChecked in clbGroups.CheckedIndices)
+            {
+                string groupToCheck = clbGroups.Items[indexChecked].ToString();
+                groupToCheck = groupToCheck.Substring(0, groupToCheck.IndexOf('(')).Trim();
+                _groupsToCheck.Add(groupToCheck);
+            }
+        }
+
+        private void ClbGroups_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
         }
     }

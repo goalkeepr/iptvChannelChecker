@@ -31,7 +31,11 @@ namespace iptvChannelChecker
         {
             get
             {
-                if (Width > 1280)
+                if (Width <= 10)
+                {
+                    return 0;
+                }
+                else if (Width > 1280)
                 {
                     return 1;
                 }

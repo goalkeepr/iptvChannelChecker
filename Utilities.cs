@@ -78,5 +78,24 @@ namespace iptvChannelChecker
 
             return frameRateSuperScript;
         }
+
+        public static string ExtractData(string inputLine, string thingToGet)
+        {
+            int thingToGetLength = thingToGet.Length + 2;
+            int startIndex = 0;
+            int endIndex = 0;
+            int stringLength = 0;
+
+            if (inputLine.Contains(thingToGet))
+            {
+                startIndex = inputLine.IndexOf(thingToGet) + thingToGetLength;
+                endIndex = inputLine.IndexOf("\"", startIndex);
+                stringLength = endIndex - startIndex;
+
+                return inputLine.Substring(startIndex, stringLength);
+            }
+
+            return string.Empty;
+        }
     }
 }

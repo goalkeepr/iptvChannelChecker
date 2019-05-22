@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle30 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle27 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle28 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle29 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.txtInputFile = new System.Windows.Forms.TextBox();
             this.btnSelectFile = new System.Windows.Forms.Button();
             this.btnOutputFile = new System.Windows.Forms.Button();
@@ -73,9 +73,14 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.cboAllowedConnections = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.lblEstimatedCompletion = new System.Windows.Forms.Label();
+            this.lblEstimatedCompletionDate = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.clbGroups = new System.Windows.Forms.CheckedListBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChannels)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.channelEntryBindingSource)).BeginInit();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtInputFile
@@ -311,9 +316,9 @@
             // 
             this.dgvChannels.AllowUserToAddRows = false;
             this.dgvChannels.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle25.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            dataGridViewCellStyle25.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dgvChannels.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle25;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dgvChannels.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvChannels.AutoGenerateColumns = false;
             this.dgvChannels.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvChannels.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -332,8 +337,8 @@
             this.dgvChannels.Name = "dgvChannels";
             this.dgvChannels.ReadOnly = true;
             this.dgvChannels.RowHeadersVisible = false;
-            dataGridViewCellStyle30.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dgvChannels.RowsDefaultCellStyle = dataGridViewCellStyle30;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dgvChannels.RowsDefaultCellStyle = dataGridViewCellStyle6;
             this.dgvChannels.ShowEditingIcon = false;
             this.dgvChannels.Size = new System.Drawing.Size(1012, 150);
             this.dgvChannels.TabIndex = 9;
@@ -369,8 +374,8 @@
             // Width
             // 
             this.Width.DataPropertyName = "Width";
-            dataGridViewCellStyle26.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.Width.DefaultCellStyle = dataGridViewCellStyle26;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.Width.DefaultCellStyle = dataGridViewCellStyle2;
             this.Width.HeaderText = "Width";
             this.Width.Name = "Width";
             this.Width.ReadOnly = true;
@@ -378,8 +383,8 @@
             // Height
             // 
             this.Height.DataPropertyName = "Height";
-            dataGridViewCellStyle27.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.Height.DefaultCellStyle = dataGridViewCellStyle27;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.Height.DefaultCellStyle = dataGridViewCellStyle3;
             this.Height.HeaderText = "Height";
             this.Height.Name = "Height";
             this.Height.ReadOnly = true;
@@ -387,8 +392,8 @@
             // FrameRateInt
             // 
             this.FrameRateInt.DataPropertyName = "FrameRateInt";
-            dataGridViewCellStyle28.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.FrameRateInt.DefaultCellStyle = dataGridViewCellStyle28;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.FrameRateInt.DefaultCellStyle = dataGridViewCellStyle4;
             this.FrameRateInt.HeaderText = "Frame Rate";
             this.FrameRateInt.Name = "FrameRateInt";
             this.FrameRateInt.ReadOnly = true;
@@ -396,8 +401,8 @@
             // QualityLevel
             // 
             this.QualityLevel.DataPropertyName = "QualityLevel";
-            dataGridViewCellStyle29.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.QualityLevel.DefaultCellStyle = dataGridViewCellStyle29;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.QualityLevel.DefaultCellStyle = dataGridViewCellStyle5;
             this.QualityLevel.HeaderText = "Quality Level";
             this.QualityLevel.Name = "QualityLevel";
             this.QualityLevel.ReadOnly = true;
@@ -449,11 +454,51 @@
             this.label1.TabIndex = 14;
             this.label1.Text = "Max Connections:";
             // 
+            // lblEstimatedCompletion
+            // 
+            this.lblEstimatedCompletion.AutoSize = true;
+            this.lblEstimatedCompletion.Location = new System.Drawing.Point(12, 150);
+            this.lblEstimatedCompletion.Name = "lblEstimatedCompletion";
+            this.lblEstimatedCompletion.Size = new System.Drawing.Size(129, 14);
+            this.lblEstimatedCompletion.TabIndex = 15;
+            this.lblEstimatedCompletion.Text = "Estimated Completion:";
+            // 
+            // lblEstimatedCompletionDate
+            // 
+            this.lblEstimatedCompletionDate.AutoSize = true;
+            this.lblEstimatedCompletionDate.Location = new System.Drawing.Point(191, 150);
+            this.lblEstimatedCompletionDate.Name = "lblEstimatedCompletionDate";
+            this.lblEstimatedCompletionDate.Size = new System.Drawing.Size(0, 14);
+            this.lblEstimatedCompletionDate.TabIndex = 16;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.clbGroups);
+            this.groupBox2.Location = new System.Drawing.Point(553, 14);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(269, 260);
+            this.groupBox2.TabIndex = 17;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Choose Group(s) to Check";
+            // 
+            // clbGroups
+            // 
+            this.clbGroups.FormattingEnabled = true;
+            this.clbGroups.Location = new System.Drawing.Point(15, 21);
+            this.clbGroups.Name = "clbGroups";
+            this.clbGroups.Size = new System.Drawing.Size(239, 225);
+            this.clbGroups.TabIndex = 0;
+            this.clbGroups.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.ClbGroups_ItemCheck);
+            this.clbGroups.SelectedIndexChanged += new System.EventHandler(this.ClbGroups_SelectedIndexChanged);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1046, 464);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.lblEstimatedCompletionDate);
+            this.Controls.Add(this.lblEstimatedCompletion);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cboAllowedConnections);
             this.Controls.Add(this.btnStop);
@@ -469,10 +514,12 @@
             this.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "frmMain";
             this.Text = "IPTV Channel Checker";
+            this.Load += new System.EventHandler(this.FrmMain_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChannels)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.channelEntryBindingSource)).EndInit();
+            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -518,6 +565,10 @@
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.ComboBox cboAllowedConnections;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblEstimatedCompletion;
+        private System.Windows.Forms.Label lblEstimatedCompletionDate;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckedListBox clbGroups;
     }
 }
 
