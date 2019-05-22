@@ -139,9 +139,12 @@ namespace iptvChannelChecker
             PopulateGroupsToCheck();
             _totalChannels = 0;
 
-            for (int i = 0; i < _fileLines.Length; i++)
+            foreach (var fileLine in _fileLines)
             {
-                if (_fileLines[i].StartsWith("#EXTINF") && _groupsToCheck.Contains(Utilities.ExtractData(_fileLines[i], "group-title")))
+                if (fileLine.StartsWith("#EXTINF") && 
+                    (_groupsToCheck.Contains(Utilities.ExtractData(fileLine, "group-title"))
+                     || (_groupsToCheck.Contains("<No Group>") && Utilities.ExtractData(fileLine, "group-title") == string.Empty)
+                    ))
                 {
                     _totalChannels++;
                 }
@@ -279,23 +282,41 @@ namespace iptvChannelChecker
             {
                 try
                 {
-                    using (StreamWriter streamWriter = new StreamWriter(txtOutputFile.Text))
+                    using (StreamWriter outputM3u =
+                        new StreamWriter(txtOutputFile.Text.Replace(".csv", string.Empty) + ".m3u"))
                     {
-                        streamWriter.WriteLine("TVG ID,TVG Name,Group Title,Channel Name,Width,Height,Frame Rate,Quality Level,Error Type");
-                        foreach (ChannelEntry channelEntry in _channelEntries)
+                        outputM3u.WriteLine("#EXTM3U");
+                        using (StreamWriter streamWriter = new StreamWriter(txtOutputFile.Text))
                         {
-                            streamWriter.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}", channelEntry.TvgId, channelEntry.TvgName, channelEntry.GroupTitle, channelEntry.ChannelName, channelEntry.Width, channelEntry.Height, channelEntry.FrameRateInt, channelEntry.QualityLevel, channelEntry.ErrorType));
+                            streamWriter.WriteLine(
+                                "TVG ID,TVG Name,Group Title,Channel Name,Width,Height,Frame Rate,Quality Level,Error Type");
+                            foreach (ChannelEntry channelEntry in _channelEntries)
+                            {
+                                streamWriter.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}",
+                                    channelEntry.TvgId, channelEntry.TvgName, channelEntry.GroupTitle,
+                                    channelEntry.ChannelName, channelEntry.Width, channelEntry.Height,
+                                    channelEntry.FrameRateInt, channelEntry.QualityLevel, channelEntry.ErrorType));
+
+                                if (string.IsNullOrEmpty(channelEntry.ErrorType))
+                                {
+                                    outputM3u.WriteLine(string.Format(
+                                        "#EXTINF:-1 tvg-id=\"{0}\" tvg-name=\"{1}\" tvg-logo=\"{2}\" group-title=\"{3}\",{4}"
+                                        , channelEntry.TvgId, channelEntry.TvgName, channelEntry.TvgLogo,
+                                        channelEntry.GroupTitle, channelEntry.ChannelName));
+                                    outputM3u.WriteLine(channelEntry.StreamUrl);
+                                }
+                            }
                         }
-                    }
 
-                    try
-                    {
-                        Process.Start("excel.exe", txtOutputFile.Text);
-                    }
-                    catch (Exception e)
-                    {
+                        try
+                        {
+                            Process.Start("excel.exe", txtOutputFile.Text);
+                        }
+                        catch (Exception e)
+                        {
 
-                        Process.Start("notepad.exe", txtOutputFile.Text);
+                            Process.Start("notepad.exe", txtOutputFile.Text);
+                        }
                     }
                 }
                 catch (Exception ex)
