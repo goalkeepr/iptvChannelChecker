@@ -60,6 +60,14 @@
             this.lblGoodChannels = new System.Windows.Forms.Label();
             this.lblTotalChecked = new System.Windows.Forms.Label();
             this.dgvChannels = new System.Windows.Forms.DataGridView();
+            this.channelEntryBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.btnStop = new System.Windows.Forms.Button();
+            this.cboAllowedConnections = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.lblEstimatedCompletion = new System.Windows.Forms.Label();
+            this.lblEstimatedCompletionDate = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.clbGroups = new System.Windows.Forms.CheckedListBox();
             this.TvgId = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TvgName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.GroupTitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -69,14 +77,6 @@
             this.FrameRateInt = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.QualityLevel = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ErrorType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.channelEntryBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.btnStop = new System.Windows.Forms.Button();
-            this.cboAllowedConnections = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.lblEstimatedCompletion = new System.Windows.Forms.Label();
-            this.lblEstimatedCompletionDate = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.clbGroups = new System.Windows.Forms.CheckedListBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChannels)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.channelEntryBindingSource)).BeginInit();
@@ -89,6 +89,7 @@
             this.txtInputFile.Name = "txtInputFile";
             this.txtInputFile.Size = new System.Drawing.Size(417, 22);
             this.txtInputFile.TabIndex = 0;
+            this.txtInputFile.Leave += new System.EventHandler(this.TxtInputFile_Leave);
             // 
             // btnSelectFile
             // 
@@ -343,77 +344,6 @@
             this.dgvChannels.Size = new System.Drawing.Size(1012, 150);
             this.dgvChannels.TabIndex = 9;
             // 
-            // TvgId
-            // 
-            this.TvgId.DataPropertyName = "TvgId";
-            this.TvgId.HeaderText = "Tvg Id";
-            this.TvgId.Name = "TvgId";
-            this.TvgId.ReadOnly = true;
-            // 
-            // TvgName
-            // 
-            this.TvgName.DataPropertyName = "TvgName";
-            this.TvgName.HeaderText = "Tvg Name";
-            this.TvgName.Name = "TvgName";
-            this.TvgName.ReadOnly = true;
-            // 
-            // GroupTitle
-            // 
-            this.GroupTitle.DataPropertyName = "GroupTitle";
-            this.GroupTitle.HeaderText = "Group Title";
-            this.GroupTitle.Name = "GroupTitle";
-            this.GroupTitle.ReadOnly = true;
-            // 
-            // ChannelName
-            // 
-            this.ChannelName.DataPropertyName = "ChannelName";
-            this.ChannelName.HeaderText = "Channel Name";
-            this.ChannelName.Name = "ChannelName";
-            this.ChannelName.ReadOnly = true;
-            // 
-            // Width
-            // 
-            this.Width.DataPropertyName = "Width";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.Width.DefaultCellStyle = dataGridViewCellStyle2;
-            this.Width.HeaderText = "Width";
-            this.Width.Name = "Width";
-            this.Width.ReadOnly = true;
-            // 
-            // Height
-            // 
-            this.Height.DataPropertyName = "Height";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.Height.DefaultCellStyle = dataGridViewCellStyle3;
-            this.Height.HeaderText = "Height";
-            this.Height.Name = "Height";
-            this.Height.ReadOnly = true;
-            // 
-            // FrameRateInt
-            // 
-            this.FrameRateInt.DataPropertyName = "FrameRateInt";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.FrameRateInt.DefaultCellStyle = dataGridViewCellStyle4;
-            this.FrameRateInt.HeaderText = "Frame Rate";
-            this.FrameRateInt.Name = "FrameRateInt";
-            this.FrameRateInt.ReadOnly = true;
-            // 
-            // QualityLevel
-            // 
-            this.QualityLevel.DataPropertyName = "QualityLevel";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.QualityLevel.DefaultCellStyle = dataGridViewCellStyle5;
-            this.QualityLevel.HeaderText = "Quality Level";
-            this.QualityLevel.Name = "QualityLevel";
-            this.QualityLevel.ReadOnly = true;
-            // 
-            // ErrorType
-            // 
-            this.ErrorType.DataPropertyName = "ErrorType";
-            this.ErrorType.HeaderText = "Error Type";
-            this.ErrorType.Name = "ErrorType";
-            this.ErrorType.ReadOnly = true;
-            // 
             // btnStop
             // 
             this.btnStop.Location = new System.Drawing.Point(436, 150);
@@ -491,6 +421,102 @@
             this.clbGroups.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.ClbGroups_ItemCheck);
             this.clbGroups.SelectedIndexChanged += new System.EventHandler(this.ClbGroups_SelectedIndexChanged);
             // 
+            // TvgId
+            // 
+            this.TvgId.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.TvgId.DataPropertyName = "TvgId";
+            this.TvgId.HeaderText = "Tvg Id";
+            this.TvgId.Name = "TvgId";
+            this.TvgId.ReadOnly = true;
+            this.TvgId.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.TvgId.Width = 43;
+            // 
+            // TvgName
+            // 
+            this.TvgName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.TvgName.DataPropertyName = "TvgName";
+            this.TvgName.HeaderText = "Tvg Name";
+            this.TvgName.Name = "TvgName";
+            this.TvgName.ReadOnly = true;
+            this.TvgName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.TvgName.Width = 64;
+            // 
+            // GroupTitle
+            // 
+            this.GroupTitle.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.GroupTitle.DataPropertyName = "GroupTitle";
+            this.GroupTitle.HeaderText = "Group Title";
+            this.GroupTitle.Name = "GroupTitle";
+            this.GroupTitle.ReadOnly = true;
+            this.GroupTitle.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // ChannelName
+            // 
+            this.ChannelName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ChannelName.DataPropertyName = "ChannelName";
+            this.ChannelName.HeaderText = "Channel Name";
+            this.ChannelName.Name = "ChannelName";
+            this.ChannelName.ReadOnly = true;
+            this.ChannelName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Width
+            // 
+            this.Width.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.Width.DataPropertyName = "Width";
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.Width.DefaultCellStyle = dataGridViewCellStyle2;
+            this.Width.HeaderText = "Width";
+            this.Width.Name = "Width";
+            this.Width.ReadOnly = true;
+            this.Width.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Width.Width = 46;
+            // 
+            // Height
+            // 
+            this.Height.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.Height.DataPropertyName = "Height";
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.Height.DefaultCellStyle = dataGridViewCellStyle3;
+            this.Height.HeaderText = "Height";
+            this.Height.Name = "Height";
+            this.Height.ReadOnly = true;
+            this.Height.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Height.Width = 49;
+            // 
+            // FrameRateInt
+            // 
+            this.FrameRateInt.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.FrameRateInt.DataPropertyName = "FrameRateInt";
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.FrameRateInt.DefaultCellStyle = dataGridViewCellStyle4;
+            this.FrameRateInt.HeaderText = "Frame Rate";
+            this.FrameRateInt.Name = "FrameRateInt";
+            this.FrameRateInt.ReadOnly = true;
+            this.FrameRateInt.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.FrameRateInt.Width = 75;
+            // 
+            // QualityLevel
+            // 
+            this.QualityLevel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.QualityLevel.DataPropertyName = "QualityLevel";
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.QualityLevel.DefaultCellStyle = dataGridViewCellStyle5;
+            this.QualityLevel.HeaderText = "Quality Level";
+            this.QualityLevel.Name = "QualityLevel";
+            this.QualityLevel.ReadOnly = true;
+            this.QualityLevel.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.QualityLevel.Width = 83;
+            // 
+            // ErrorType
+            // 
+            this.ErrorType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.ErrorType.DataPropertyName = "ErrorType";
+            this.ErrorType.HeaderText = "Error Type";
+            this.ErrorType.Name = "ErrorType";
+            this.ErrorType.ReadOnly = true;
+            this.ErrorType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.ErrorType.Width = 65;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 14F);
@@ -543,15 +569,6 @@
         private System.Windows.Forms.Label lblTotalChannelsCount;
         private System.Windows.Forms.DataGridView dgvChannels;
         private System.Windows.Forms.BindingSource channelEntryBindingSource;
-        private System.Windows.Forms.DataGridViewTextBoxColumn TvgId;
-        private System.Windows.Forms.DataGridViewTextBoxColumn TvgName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn GroupTitle;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ChannelName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Width;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Height;
-        private System.Windows.Forms.DataGridViewTextBoxColumn FrameRateInt;
-        private System.Windows.Forms.DataGridViewTextBoxColumn QualityLevel;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ErrorType;
         private System.Windows.Forms.Label lblOtherSdCount;
         private System.Windows.Forms.Label lblOtherSd;
         private System.Windows.Forms.Label lbl720x30Count;
@@ -569,6 +586,15 @@
         private System.Windows.Forms.Label lblEstimatedCompletionDate;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckedListBox clbGroups;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TvgId;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TvgName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn GroupTitle;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ChannelName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Width;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Height;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FrameRateInt;
+        private System.Windows.Forms.DataGridViewTextBoxColumn QualityLevel;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ErrorType;
     }
 }
 

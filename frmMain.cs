@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -33,11 +34,17 @@ namespace iptvChannelChecker
         private ThreadHandler _threadHandler = new ThreadHandler(2);
         private List<string> _groupsToCheck = new List<string>();
         private Dictionary<string, int> _groupsDictionary = new Dictionary<string, int>();
+
+        private string _previousInputFilePath = string.Empty;
         public frmMain()
         {
             InitializeComponent();
             cboAllowedConnections.SelectedIndex = 0;
             dgvChannels.AutoGenerateColumns = false;
+            dgvChannels.Columns[4].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvChannels.Columns[5].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvChannels.Columns[6].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvChannels.Columns[7].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
 
         private void BtnSelectFile_Click(object sender, EventArgs e)
@@ -52,42 +59,63 @@ namespace iptvChannelChecker
             {
                 txtInputFile.Text = openFileDialog.FileName;
 
+                DownloadM3uIfNotLocal();
 
-                _fileLines = File.ReadAllLines(openFileDialog.FileName);
-                _totalChannels = _fileLines.Count(p => p.StartsWith("#EXTINF"));
+                GetGroupsFromM3uFile();
+            }
+        }
 
-                clbGroups.Items.Clear();
+        private void GetGroupsFromM3uFile()
+        {
+            _fileLines = File.ReadAllLines(txtInputFile.Text);
+            _totalChannels = _fileLines.Count(p => p.StartsWith("#EXTINF"));
 
-                int channelCount = 0;
-                foreach (string fileLine in _fileLines)
+            clbGroups.Items.Clear();
+
+            int channelCount = 0;
+            foreach (string fileLine in _fileLines)
+            {
+                if (fileLine.StartsWith("#EXTINF"))
                 {
-                    if (fileLine.StartsWith("#EXTINF"))
+                    string groupName = Utilities.ExtractData(fileLine, "group-title");
+                    groupName = string.IsNullOrEmpty(groupName) ? "<No Group>" : groupName;
+
+                    //if (!clbGroups.Items.Contains(groupName))
+                    //{
+                    //    clbGroups.Items.Add(groupName);
+                    //}
+                    channelCount++;
+
+                    if (!_groupsDictionary.ContainsKey(groupName))
                     {
-                        string groupName = Utilities.ExtractData(fileLine, "group-title");
-                        groupName = string.IsNullOrEmpty(groupName) ? "<No Group>" : groupName;
-
-                        //if (!clbGroups.Items.Contains(groupName))
-                        //{
-                        //    clbGroups.Items.Add(groupName);
-                        //}
-                        channelCount++;
-
-                        if (!_groupsDictionary.ContainsKey(groupName))
-                        {
-                            _groupsDictionary.Add(groupName, 1);
-                        }
-                        else
-                        {
-                            _groupsDictionary[groupName]++;
-                        }
+                        _groupsDictionary.Add(groupName, 1);
+                    }
+                    else
+                    {
+                        _groupsDictionary[groupName]++;
                     }
                 }
+            }
 
-                clbGroups.Items.Add(string.Format("{0} ({1})", "All Groups", channelCount));
+            clbGroups.Items.Add(string.Format("{0} ({1})", "All Groups", channelCount));
 
-                foreach (string key in _groupsDictionary.Keys)
+            foreach (string key in _groupsDictionary.Keys)
+            {
+                clbGroups.Items.Add(string.Format("{0} ({1})", key, _groupsDictionary[key]));
+            }
+        }
+
+        private void DownloadM3uIfNotLocal()
+        {
+            if (txtInputFile.Text.StartsWith("http"))
+            {
+                using (WebClient client = new WebClient()) // WebClient class inherits IDisposable
                 {
-                    clbGroups.Items.Add(string.Format("{0} ({1})", key, _groupsDictionary[key]));
+                    string tempFileName = Path.GetTempFileName();
+
+                    File.WriteAllText(tempFileName, client.DownloadString(txtInputFile.Text));
+
+                    txtInputFile.Text = tempFileName;
                 }
             }
         }
@@ -324,6 +352,16 @@ namespace iptvChannelChecker
         private void ClbGroups_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void TxtInputFile_Leave(object sender, EventArgs e)
+        {
+            if (txtInputFile.Text != _previousInputFilePath)
+            {
+                DownloadM3uIfNotLocal();
+                GetGroupsFromM3uFile();
+                _previousInputFilePath = txtInputFile.Text;
+            }
         }
     }
 }
