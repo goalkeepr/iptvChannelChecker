@@ -152,23 +152,32 @@ namespace iptvChannelChecker
             prgProgressBar.Maximum = _totalChannels;
             prgProgressBar.Step = 1;
             prgProgressBar.Value = 0;
+            int i = 0;
+            int progressCheck = int.Parse(cboAllowedConnections.GetItemText(cboAllowedConnections.SelectedItem));
 
             var progress = new Progress<int>(v =>
             {
-                // This lambda is executed in context of UI thread,
-                // so it can safely update form controls
-                prgProgressBar.Value += v;
-                lblProgress.Text = string.Format("{0} / {1} ({2}%)", prgProgressBar.Value, _totalChannels, prgProgressBar.Value * 100 / _totalChannels);
-                lblTotalChannelsCount.Text = (_goodChannels + _badChannels).ToString("N0");
-                lblGoodChannelsCount.Text = _goodChannels.ToString("N0");
-                lblBadChannelsCount.Text = _badChannels.ToString("N0");
-                lbl1080x60Count.Text = _1080x60Count.ToString("N0");
-                lbl1080x30Count.Text = _1080x30Count.ToString("N0");
-                lbl720x60Count.Text = _720x60Count.ToString("N0");
-                lbl720x30Count.Text = _720x30Count.ToString("N0");
-                lblOtherSdCount.Text = _otherSdCount.ToString("N0");
-                lblEstimatedCompletionDate.Text = DateTime.Now.AddSeconds(((DateTime.Now - _startDateTime).TotalSeconds / ((float) (_goodChannels + _badChannels))) * _totalChannels).ToString("MM/dd/yyyy hh:mm tt");
-                RebindDataGridView();
+                i += v;
+                if (((i-1) % progressCheck == 0) || (i == _totalChannels))
+                {
+                    
+                    // This lambda is executed in context of UI thread,
+                    // so it can safely update form controls
+                    prgProgressBar.Maximum = (prgProgressBar.Maximum > (prgProgressBar.Value) ? prgProgressBar.Maximum : (prgProgressBar.Maximum + 1));
+                    prgProgressBar.Value = i;
+                    lblProgress.Text = string.Format("{0} / {1} ({2}%)", prgProgressBar.Value, _totalChannels, prgProgressBar.Value * 100 / _totalChannels);
+                    lblTotalChannelsCount.Text = (_goodChannels + _badChannels).ToString("N0");
+                    lblGoodChannelsCount.Text = _goodChannels.ToString("N0");
+                    lblBadChannelsCount.Text = _badChannels.ToString("N0");
+                    lbl1080x60Count.Text = _1080x60Count.ToString("N0");
+                    lbl1080x30Count.Text = _1080x30Count.ToString("N0");
+                    lbl720x60Count.Text = _720x60Count.ToString("N0");
+                    lbl720x30Count.Text = _720x30Count.ToString("N0");
+                    lblOtherSdCount.Text = _otherSdCount.ToString("N0");
+                    lblEstimatedCompletionDate.Text = DateTime.Now.AddSeconds(((DateTime.Now - _startDateTime).TotalSeconds / ((float)(_goodChannels + _badChannels))) * _totalChannels).ToString("MM/dd/yyyy hh:mm tt");
+                    RebindDataGridView();
+                }
+                
             });
 
             // Run operation in another thread
@@ -185,6 +194,7 @@ namespace iptvChannelChecker
 
             // TODO: Do something after all calculations
             OutputResultsFile();
+            MessageBox.Show("Processing Complete.", "Done!", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public void DoWork(IProgress<int> progress)
@@ -273,7 +283,7 @@ namespace iptvChannelChecker
 
         private void CboAllowedConnections_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _threadHandler = new ThreadHandler(cboAllowedConnections.SelectedIndex+1);
+            _threadHandler = new ThreadHandler(int.Parse(cboAllowedConnections.GetItemText(cboAllowedConnections.SelectedIndex)));
         }
 
         private void OutputResultsFile()
@@ -289,13 +299,14 @@ namespace iptvChannelChecker
                         using (StreamWriter streamWriter = new StreamWriter(txtOutputFile.Text))
                         {
                             streamWriter.WriteLine(
-                                "TVG ID,TVG Name,Group Title,Channel Name,Width,Height,Frame Rate,Quality Level,Error Type");
+                                "TVG ID,TVG Name,Group Title,Channel Name,Width,Height,Frame Rate,Quality Level,Error Type,Stream URL");
                             foreach (ChannelEntry channelEntry in _channelEntries)
                             {
-                                streamWriter.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}",
+                                streamWriter.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
                                     channelEntry.TvgId, channelEntry.TvgName, channelEntry.GroupTitle,
                                     channelEntry.ChannelName, channelEntry.Width, channelEntry.Height,
-                                    channelEntry.FrameRateInt, channelEntry.QualityLevel, channelEntry.ErrorType));
+                                    channelEntry.FrameRateInt, channelEntry.QualityLevel, channelEntry.ErrorType,
+                                    channelEntry.StreamUrl));
 
                                 if (string.IsNullOrEmpty(channelEntry.ErrorType))
                                 {
