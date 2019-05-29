@@ -154,6 +154,10 @@ namespace iptvChannelChecker
             prgProgressBar.Value = 0;
             int i = 0;
             int progressCheck = int.Parse(cboAllowedConnections.GetItemText(cboAllowedConnections.SelectedItem));
+            if(chkSkipChecks.Checked)
+            {
+                progressCheck = 100;
+            }
 
             var progress = new Progress<int>(v =>
             {
@@ -230,7 +234,7 @@ namespace iptvChannelChecker
         private void GetChannelInfo(IProgress<int> progress, string firstLine, string secondLine)
         {
             var channelEntry = new ChannelEntry(string.Empty, firstLine, secondLine,
-                string.Empty, string.Empty);
+                string.Empty, string.Empty, chkSkipChecks.Checked);
             _channelEntries.Add(channelEntry);
             if (string.IsNullOrEmpty(channelEntry.ErrorType))
             {

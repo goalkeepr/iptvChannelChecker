@@ -100,7 +100,7 @@ namespace iptvChannelChecker
             }
         }
 
-        public ChannelEntry(string provider, string inputLine, string nextLine, string epg, string extraEpg)
+        public ChannelEntry(string provider, string inputLine, string nextLine, string epg, string extraEpg, bool skipCheck = false)
         {
             Provider = provider;
             TvgId = string.Empty;
@@ -135,102 +135,109 @@ namespace iptvChannelChecker
             //}
             //else if (IsChannelToCheck(epg, extraEpg))
             //{
-            try
+            if (skipCheck == true)
             {
-                ErrorType = "Bad Stream";
-                var ffProbe = new FFProbe();
-
-                ffProbe.ExecutionTimeout = new TimeSpan(0, 0, 10);
-                var videoInfo = ffProbe.GetMediaInfo(string.Concat("\"", nextLine, "\""));
-                //var videoInfo = ffProbe.GetMediaInfo(nextLine);
-                //var videoInfo = ffProbe.GetMediaInfo(nextLine.Replace("@", "%40"));
-
-                //Console.WriteLine("Media information for: {0}", nextLine);
-                //Console.WriteLine("File format: {0}", videoInfo.FormatName);
-                //Console.WriteLine("Duration: {0}", videoInfo.Duration);
-                //foreach (var tag in videoInfo.FormatTags)
-                //{
-                //    Console.WriteLine("\t{0}: {1}", tag.Key, tag.Value);
-                //}
-
-                //foreach (var stream in videoInfo.Streams)
-                //{
-                //    Console.WriteLine("Stream {0} ({1})", stream.CodecName, stream.CodecType);
-                //    if (stream.CodecType == "video")
-                //    {
-                //        Console.WriteLine("\tFrame size: {0}x{1}", stream.Width, stream.Height);
-                //        Console.WriteLine("\tFrame rate: {0:0.##}", stream.FrameRate);
-                //    }
-                //    foreach (var tag in stream.Tags)
-                //    {
-                //        Console.WriteLine("\t{0}: {1}", tag.Key, tag.Value);
-                //    }
-                //}
-
-                var stream = videoInfo.Streams[0];
-                Width = stream.Width;
-                Height = stream.Height;
-                FrameRate = stream.FrameRate;
-                //Console.WriteLine("\tFrame size: {0}x{1}", stream.Width, stream.Height);
-                //Console.WriteLine("\tFrame rate: {0:0.##}", stream.FrameRate);
-                if (Width > 0)
-                {
-                    ErrorType = string.Empty;
-                }
-                //else
-                //{                        
-                //    videoInfo = ffProbe.GetMediaInfo(nextLine);
-                //    foreach(var subsStream in videoInfo.Streams)
-                //    {
-                //        Width = stream.Width;
-                //        Height = stream.Height;
-                //        FrameRate = stream.FrameRate;
-
-                //        if (Width > 0)
-                //            break;
-                //    }
-                //    //stream = videoInfo.Streams[0];
-
-
-                //    if (Width > 0)
-                //    {
-                //        ErrorType = string.Empty;
-                //    }
-                //}
+                ErrorType = "Skipped by Request";
             }
-            catch (Exception ex)
+            else
             {
-                if (ex.Message.Contains("403 Forbidden"))
-                {
-                    Width = 1;
-                    Height = 1;
-                    FrameRate = 1;
-                    System.Threading.Thread.Sleep(5000);
-                }
                 try
                 {
                     ErrorType = "Bad Stream";
                     var ffProbe = new FFProbe();
 
                     ffProbe.ExecutionTimeout = new TimeSpan(0, 0, 10);
-                    var videoInfo = ffProbe.GetMediaInfo(nextLine);
+                    var videoInfo = ffProbe.GetMediaInfo(string.Concat("\"", nextLine, "\""));
+                    //var videoInfo = ffProbe.GetMediaInfo(nextLine);
+                    //var videoInfo = ffProbe.GetMediaInfo(nextLine.Replace("@", "%40"));
+
+                    //Console.WriteLine("Media information for: {0}", nextLine);
+                    //Console.WriteLine("File format: {0}", videoInfo.FormatName);
+                    //Console.WriteLine("Duration: {0}", videoInfo.Duration);
+                    //foreach (var tag in videoInfo.FormatTags)
+                    //{
+                    //    Console.WriteLine("\t{0}: {1}", tag.Key, tag.Value);
+                    //}
+
+                    //foreach (var stream in videoInfo.Streams)
+                    //{
+                    //    Console.WriteLine("Stream {0} ({1})", stream.CodecName, stream.CodecType);
+                    //    if (stream.CodecType == "video")
+                    //    {
+                    //        Console.WriteLine("\tFrame size: {0}x{1}", stream.Width, stream.Height);
+                    //        Console.WriteLine("\tFrame rate: {0:0.##}", stream.FrameRate);
+                    //    }
+                    //    foreach (var tag in stream.Tags)
+                    //    {
+                    //        Console.WriteLine("\t{0}: {1}", tag.Key, tag.Value);
+                    //    }
+                    //}
 
                     var stream = videoInfo.Streams[0];
                     Width = stream.Width;
                     Height = stream.Height;
                     FrameRate = stream.FrameRate;
+                    //Console.WriteLine("\tFrame size: {0}x{1}", stream.Width, stream.Height);
+                    //Console.WriteLine("\tFrame rate: {0:0.##}", stream.FrameRate);
                     if (Width > 0)
                     {
                         ErrorType = string.Empty;
                     }
+                    //else
+                    //{                        
+                    //    videoInfo = ffProbe.GetMediaInfo(nextLine);
+                    //    foreach(var subsStream in videoInfo.Streams)
+                    //    {
+                    //        Width = stream.Width;
+                    //        Height = stream.Height;
+                    //        FrameRate = stream.FrameRate;
+
+                    //        if (Width > 0)
+                    //            break;
+                    //    }
+                    //    //stream = videoInfo.Streams[0];
+
+
+                    //    if (Width > 0)
+                    //    {
+                    //        ErrorType = string.Empty;
+                    //    }
+                    //}
                 }
-                catch (Exception ex1)
+                catch (Exception ex)
                 {
-                    if (ex1.Message.Contains("403 Forbidden"))
+                    if (ex.Message.Contains("403 Forbidden"))
                     {
                         Width = 1;
                         Height = 1;
                         FrameRate = 1;
+                        System.Threading.Thread.Sleep(5000);
+                    }
+                    try
+                    {
+                        ErrorType = "Bad Stream";
+                        var ffProbe = new FFProbe();
+
+                        ffProbe.ExecutionTimeout = new TimeSpan(0, 0, 10);
+                        var videoInfo = ffProbe.GetMediaInfo(nextLine);
+
+                        var stream = videoInfo.Streams[0];
+                        Width = stream.Width;
+                        Height = stream.Height;
+                        FrameRate = stream.FrameRate;
+                        if (Width > 0)
+                        {
+                            ErrorType = string.Empty;
+                        }
+                    }
+                    catch (Exception ex1)
+                    {
+                        if (ex1.Message.Contains("403 Forbidden"))
+                        {
+                            Width = 1;
+                            Height = 1;
+                            FrameRate = 1;
+                        }
                     }
                 }
             }
